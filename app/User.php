@@ -19,7 +19,7 @@ class User extends \TCG\Voyager\Models\User
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'avatar'
     ];
 
     /**
@@ -39,4 +39,24 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function elements()
+    {
+        return $this->hasMany('App\Element');
+    }
+    public function photos()
+    {
+        return $this->hasMany('App\Photo');
+    }
+    public function coments()
+    {
+        return $this->hasMany('App\Coment');
+    }
+    public function categories()
+    {
+        return $this->hasMany('App\Category');
+    }
+    public function customs()
+    {
+        return $this->hasMany('App\Custom');
+    }
 }

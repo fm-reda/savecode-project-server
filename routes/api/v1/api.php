@@ -16,15 +16,27 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+// Route::get('file', 'FileController@fileDown');
+// Route::get('photo', 'FileController@getPhoto');
+// Route::resource('/photos', 'GalleryController');
+// Route::get('/photos', 'GalleryController@getPhotos');
+// Route::post('/photos', 'GalleryController@uploadPhotos');
+// Route::delete('/photos', 'GalleryController@deletePhoto');
+// Route::get('/logout', 'Auth\LoginController@logout');
+// Route::get('{all?}', 'GalleryController@index')->where('all', '([A-z\d-\/_.]+)?');
+// Route::get('search/{slug}', 'api\v1\UserController@searchByName');
 
 Route::post('login', 'api\v1\UserController@login');
 Route::post('register', 'api\v1\UserController@register');
-Route::get('search/{slug}', 'api\v1\UserController@searchByName');
+
+
 
 
 
 
 Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('upload', 'UploadController@uploadPhoto');
+    Route::get('images', 'UploadController@getPhoto');
     Route::get('details', 'api\v1\UserController@details');
 
     Route::post('logout', 'api\v1\UserController@logout');
