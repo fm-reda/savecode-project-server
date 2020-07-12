@@ -18,6 +18,10 @@ class Element extends Model
     }
     public function custom()
     {
-        return $this->hasOne('App\Coment');
+        return $this->hasOne('App\Custom');
+    }
+    public function defaultCategory()
+    {
+        return $this->belongsTo('App\DefaultCategory');
     }
 }

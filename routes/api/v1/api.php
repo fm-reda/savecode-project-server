@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomController;
 use Illuminate\Http\Request;
 
 /*
@@ -30,11 +31,40 @@ Route::post('login', 'api\v1\UserController@login');
 Route::post('register', 'api\v1\UserController@register');
 
 
+// Route::resources([
+//     'elements' => 'ElementController',
 
+// ]);
 
+//Get all default categories
+Route::get('default-categories', 'DefaultCategoryController@index');
 
 
 Route::group(['middleware' => 'auth:api'], function () {
+    //custom
+    Route::post('custom-category', 'CustomController@showByCategory');
+    Route::post('custom-started', 'CustomController@firstCreate');
+    //Category
+    Route::resources([
+        'categories' => 'CategoryController',
+
+    ]);
+    //Sub category
+    Route::resources([
+        'subcategories' => 'SubCategoryController',
+
+    ]);
+    //Elements
+    Route::resources([
+        'elements' => 'ElementController',
+
+    ]);
+
+    // Route::resources([
+    //     'customs' => 'ElementController',
+
+    // ]);
+
     Route::post('upload', 'UploadController@uploadPhoto');
     Route::get('images', 'UploadController@getPhoto');
     Route::get('details', 'api\v1\UserController@details');

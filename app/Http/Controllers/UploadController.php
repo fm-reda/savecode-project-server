@@ -34,6 +34,7 @@ class UploadController extends Controller
         $user = Auth::User();
 
         // dd($user);
+        
         $photo = $user->photos()->create([
             'uri' => $path,
             'public' => false,

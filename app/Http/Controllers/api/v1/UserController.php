@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Category;
+use App\DefaultCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +16,7 @@ class UserController extends Controller
 {
     public $successStatus = 200;
     public $unauthorisedStatus = 401;
+    public $createdStatus = 201;
 
     public function login()
 
@@ -38,6 +41,14 @@ class UserController extends Controller
     public function register(Request $request)
     {
 
+
+
+        // dd($category);
+        $userEmail = User::where('email', $request->get('email'))->first();
+
+        if ($userEmail) {
+            return response()->json(['Email already exist' => $userEmail], 208);
+        }
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -49,13 +60,26 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
+        // dd($request->get('email'));
+
+        // dd(User::where('email', $request->get('email'))->get());
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         // dd($success['token']);
         $success['name'] =  $user->name;
-        return response()->json(['success' => $success], $this->successStatus);
+        $success['email'] =  $user->email;
+        $defaultCategories = DefaultCategory::all();
+        foreach ($defaultCategories as  $defaultCategory) {
+            $category = Category::create([
+                'title' => $defaultCategory->title,
+                'slug' => $defaultCategory->slug,
+                'user_id' => $user->id,
+                // 'user_id'=>$defaultCategory->title,
+            ]);
+        }
+        return response()->json(['success' => $user], $this->createdStatus);
     }
     public function details()
 
