@@ -17,6 +17,7 @@ class CreateElementsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->string('title');
+            $table->string('slug');
             $table->text('description');
             $table->text('code');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
