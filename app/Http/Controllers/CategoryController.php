@@ -89,6 +89,15 @@ class CategoryController extends Controller
     {
         //
     }
+    public function all()
+    {
+        $user = Auth::User();
+        // $user=User::find(2);
+        dd($user);
+        $categories = Category::get();
+        dd($categories);
+        $categories = $user->categories->all();
+    }
 
     /**
      * Show the form for editing the specified resource.

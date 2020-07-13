@@ -41,12 +41,17 @@ Route::get('default-categories', 'DefaultCategoryController@index');
 
 
 Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('category', 'CategoryController@all');
     //custom
     Route::post('custom-category', 'CustomController@showByCategory');
     Route::post('custom-started', 'CustomController@firstCreate');
     //Category
     Route::resources([
-        'categories' => 'CategoryController',
+        'customs' => 'CustomController',
+
+    ]);
+    Route::resources([
+        'categorie' => 'CategoryController',
 
     ]);
     //Sub category

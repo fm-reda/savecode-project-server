@@ -90,7 +90,27 @@ class ElementController extends Controller
      */
     public function show($id)
     {
-        //
+        $element = Element::find($id);
+
+
+        $custom = $element->custom->first();
+        $category = $custom->category->first();
+        $subCategory = $custom->subCategory->first();
+        $user = $custom->user->first();
+        return response()->json(['element' => $element, 'custom' => $custom], 200);
+
+
+
+        if (!$custom) {
+            return response()->json(['warning' => 'custom data not found'], 205);
+        } else {
+            $element = $custom->element->first();
+            $category = $custom->category->first();
+            $subCategory = $custom->subCategory->first();
+            $user = $custom->user->first();
+
+            return response()->json(['success' => $custom], 200);
+        }
     }
 
     /**

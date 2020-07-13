@@ -113,7 +113,24 @@ class CustomController extends Controller
      */
     public function show($id)
     {
-        //
+        $custom = Custom::find($id);
+
+
+
+        if (!$custom) {
+            return response()->json(['warning' => 'custom data not found'], 205);
+        } else {
+            $element = $custom->element->first();
+            $category = $custom->category->first();
+            $subCategory = $custom->subCategory->first();
+            $user = $custom->user->first();
+
+            return response()->json(['success' => $custom], 200);
+        }
+
+
+        // dd($request->all());
+        // dd($id);
     }
     public function showByCategory(Request $request)
     {
