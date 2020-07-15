@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Custom;
 use App\DefaultCategory;
 use App\Element;
 use Illuminate\Http\Request;
@@ -92,25 +94,57 @@ class ElementController extends Controller
     {
         $element = Element::find($id);
 
+        // $element = Element::find($id);
+        // $custom = Custom::find($id);
+        $custom = Custom::where('element_id', $id)->first();
+        // return response()->json(['success' => $element], 200);
+        // dd($custom);
+        // return response()->json(['warning' => $custom], 205);
 
-        $custom = $element->custom->first();
-        $category = $custom->category->first();
-        $subCategory = $custom->subCategory->first();
-        $user = $custom->user->first();
-        return response()->json(['element' => $element, 'custom' => $custom], 200);
 
 
 
         if (!$custom) {
             return response()->json(['warning' => 'custom data not found'], 205);
         } else {
-            $element = $custom->element->first();
+            // $element = $custom->element->first();
             $category = $custom->category->first();
+            // dd($custom);
             $subCategory = $custom->subCategory->first();
             $user = $custom->user->first();
 
-            return response()->json(['success' => $custom], 200);
+            return response()->json(['element' => $element, 'custom' => $custom], 200);
         }
+
+        // $element = Element::find(3);
+        // dd($element);
+        // $custom = $element->custom->first();
+        // dd($custom);
+
+        // $element = Element::find($id);
+        // $user = $element->user->first();
+
+        // dd($user);
+
+        // $custom = $element->custom->first();
+        // // dd($custom);
+        // $category = $custom->category->first();
+        // $subCategory = $custom->subCategory->first();
+        // $user = $custom->user->first();
+        // return response()->json(['element' => $element, 'custom' => $custom], 200);
+
+
+
+        // if (!$custom) {
+        //     return response()->json(['warning' => 'custom data not found'], 205);
+        // } else {
+        //     $element = $custom->element->first();
+        //     $category = $custom->category->first();
+        //     $subCategory = $custom->subCategory->first();
+        //     $user = $custom->user->first();
+
+        //     return response()->json(['success' => $custom], 200);
+        // }
     }
 
     /**

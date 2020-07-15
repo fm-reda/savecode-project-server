@@ -18,9 +18,11 @@ class UploadController extends Controller
         $file = $request->file('file');
         // dd($file);
         $ext = $file->extension();
+
         $name = $request->file('file');
         // $mytime = Carbon::now()->format('d-m-Y');
         // $random = Str::random(10);
+        
         $name = Carbon::now()->format('d-m-Y') . '-' . Str::random(10) . '.' . $ext;
 
         list($width, $height) = getimagesize($file);

@@ -64,12 +64,15 @@ class UserController extends Controller
 
         // dd(User::where('email', $request->get('email'))->get());
         $input = $request->all();
+        // dd($input);
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         // dd($success['token']);
         $success['name'] =  $user->name;
         $success['email'] =  $user->email;
+
+
         $defaultCategories = DefaultCategory::all();
         foreach ($defaultCategories as  $defaultCategory) {
             $category = Category::create([

@@ -113,6 +113,7 @@ class CustomController extends Controller
      */
     public function show($id)
     {
+        
         $custom = Custom::find($id);
 
 
