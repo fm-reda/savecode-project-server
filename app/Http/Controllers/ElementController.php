@@ -6,6 +6,7 @@ use App\Category;
 use App\Custom;
 use App\DefaultCategory;
 use App\Element;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,8 +20,50 @@ class ElementController extends Controller
      */
     public function index()
     {
-        //
+        // dd('test');
+        $user = Auth::User();
+        // dd($user);
+
+        $countElement = Element::All()->count();
+        $countUser = User::All()->count();
+        // $countCustom = Custom::All()->count();
+        $countCustom = $user->customs->count();
+
+        $countCategory = $user->categories->count();
+        // dd($countCustom);
+        $elements = Element::latest()->take(3)->get();
+        foreach ($elements as  $element) {
+            # code...
+            $element->user->get();
+            $element->defaultCategory->get();
+        }
+        $customs = $user->customs->take(3)->all();
+        foreach ($customs as  $custom) {
+            # code...
+            $custom->element->get();
+            $custom->category->get();
+        }
+        $elementsUser = $user->elements->take(3)->all();
+        foreach ($elementsUser as  $elementUser) {
+            # code...
+            $elementUser->defaultCategory->get();
+            // $custom->category->get();
+        }
+        // dd($customs);
+
+
+
+        return response()->json([
+            'elements' => $elements,
+            'elementsUser' => $elementsUser,
+            'customs' => $customs,
+            'countUser' => $countUser,
+            'countElement' => $countElement,
+            'countCustom' => $countCustom,
+            'countCategory' => $countCategory
+        ], 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -93,10 +136,14 @@ class ElementController extends Controller
     public function show($id)
     {
         $element = Element::find($id);
+        $defaultCatgeory = $element->defaultCategory->get();
+        $user = $element->user->get();
 
         // $element = Element::find($id);
         // $custom = Custom::find($id);
-        $custom = Custom::where('element_id', $id)->first();
+        $custom = Custom::where('element_id', $id)
+            ->where('user_id', Auth::User()->id)
+            ->first();
         // return response()->json(['success' => $element], 200);
         // dd($custom);
         // return response()->json(['warning' => $custom], 205);
@@ -105,7 +152,7 @@ class ElementController extends Controller
 
 
         if (!$custom) {
-            return response()->json(['warning' => 'custom data not found'], 205);
+            return response()->json(['element' => $element], 200);
         } else {
             // $element = $custom->element->first();
             $category = $custom->category->first();
@@ -115,37 +162,56 @@ class ElementController extends Controller
 
             return response()->json(['element' => $element, 'custom' => $custom], 200);
         }
+    }
 
-        // $element = Element::find(3);
-        // dd($element);
-        // $custom = $element->custom->first();
-        // dd($custom);
+    public function showByTitle(Request $request)
+    {
+        // return response()->json(['success' => $request->get('word')], 200);
+        // return response()->json(['success' => "rrrr"], 200);
+
+        $search = $request->get('word');
+        $slugSearch = Str::slug($search);
+        // dd($slugSearch);
+
+        // $element = Element::where('slug', 'like', '%(Str::slug($request->get('title')))%')->get();
+        $elements = Element::where('slug', 'like', "%$slugSearch%")->latest()->get();
+        foreach ($elements as $element) {
+            $user = $element->user->get();
+            $default_category = $element->defaultCategory->get();
+            $custom = $element->customs->all();
+            // return response()->json(['data'=>$custom],200);
+            # code...
+        }
+        // $element = Element::where('slug', 'like', "%javascript%")->get();
+        return response()->json(['elements' => $elements], 200);
 
         // $element = Element::find($id);
-        // $user = $element->user->first();
+        // $defaultCatgeory = $element->defaultCategory->get();
+        // $user = $element->user->get();
 
-        // dd($user);
-
-        // $custom = $element->custom->first();
+        // // $element = Element::find($id);
+        // // $custom = Custom::find($id);
+        // $custom = Custom::where('element_id', $id)->first();
+        // // return response()->json(['success' => $element], 200);
         // // dd($custom);
-        // $category = $custom->category->first();
-        // $subCategory = $custom->subCategory->first();
-        // $user = $custom->user->first();
-        // return response()->json(['element' => $element, 'custom' => $custom], 200);
+        // // return response()->json(['warning' => $custom], 205);
+
 
 
 
         // if (!$custom) {
-        //     return response()->json(['warning' => 'custom data not found'], 205);
+        //     return response()->json(['element' => $element], 200);
         // } else {
-        //     $element = $custom->element->first();
+        //     // $element = $custom->element->first();
         //     $category = $custom->category->first();
+        //     // dd($custom);
         //     $subCategory = $custom->subCategory->first();
         //     $user = $custom->user->first();
 
-        //     return response()->json(['success' => $custom], 200);
+        //     return response()->json(['element' => $element, 'custom' => $custom], 200);
         // }
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -181,3 +247,33 @@ class ElementController extends Controller
         //
     }
 }
+
+        // $element = Element::find(3);
+        // dd($element);
+        // $custom = $element->custom->first();
+        // dd($custom);
+    
+        // $element = Element::find($id);
+        // $user = $element->user->first();
+    
+        // dd($user);
+    
+        // $custom = $element->custom->first();
+        // // dd($custom);
+        // $category = $custom->category->first();
+        // $subCategory = $custom->subCategory->first();
+        // $user = $custom->user->first();
+        // return response()->json(['element' => $element, 'custom' => $custom], 200);
+    
+    
+    
+        // if (!$custom) {
+        //     return response()->json(['warning' => 'custom data not found'], 205);
+        // } else {
+        //     $element = $custom->element->first();
+        //     $category = $custom->category->first();
+        //     $subCategory = $custom->subCategory->first();
+        //     $user = $custom->user->first();
+    
+        //     return response()->json(['success' => $custom], 200);
+        // }

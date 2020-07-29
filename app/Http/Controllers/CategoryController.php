@@ -26,7 +26,17 @@ class CategoryController extends Controller
         // $subCategories = $categories->subCategories->all();
         foreach ($categories as  $category) {
 
+            $number = $category->count();
+
             $subCategories = $category->subCategories->all();
+            foreach ($subCategories as  $subCategory) {
+
+
+
+                $customs = $subCategory->customs->count();
+                // $number = $customs->count();
+                // return response()->json(['success' => $customs], 200);
+            }
             // dd($subCategories);
         }
         // return response()->json(['success' => $categories], 200);
@@ -89,14 +99,61 @@ class CategoryController extends Controller
     {
         //
     }
-    public function all()
+    public function singleCategories(Request $request)
     {
         $user = Auth::User();
+        $category = Auth::User()->categories->where('slug',  Str::slug($request->get('category')))->first();
+        $subCategory = $category->subCategories->where('slug',  Str::slug($request->get('subCategory')))->first();
         // $user=User::find(2);
+        return response()->json([
+            'category' => $category, 'subCategory' => $subCategory
+        ], 200);
+
         dd($user);
         $categories = Category::get();
         dd($categories);
         $categories = $user->categories->all();
+    }
+
+    public function updateCategories(Request $request)
+
+    {
+        $user = Auth::User();
+        //  return response()->json(['success' => $user], 201);
+        // dd(User::All());
+
+
+
+        // $user = Auth::user();
+        $categoryUpdate = Category::find($request->get('category_id'));
+        $subCategoryUpdate = SubCategory::find($request->get('sub_category_id'));
+        $category = Auth::User()->categories->where('slug',  Str::slug($request->get('category')))->first();
+        $subCategory = Category::find($request->get('category_id'))->subCategories
+            ->where('slug',  Str::slug($request->get('subCategory')))->first();
+        if ($category && $category->slug != $categoryUpdate->slug) {
+            return response()->json(['category' => Str::slug($request->get('category'))], 203);
+        } else {
+
+            $categoryUpdate->title = $request->get('category');
+            $categoryUpdate->slug =  Str::slug($request->get('category'));
+            $categoryUpdate->save();
+        }
+
+        if ($subCategory && $subCategory->slug != $subCategoryUpdate->slug) {
+
+            // return response()->json(['subCategory' => $category], 206);
+            return response()->json(['subCategory' => Str::slug($request->get('subCategory'))], 206);
+        } else {
+            $subCategoryUpdate->title = $request->get('subCategory');
+            $subCategoryUpdate->slug =  Str::slug($request->get('subCategory'));
+            $subCategoryUpdate->save();
+        }
+
+
+        return response()->json(['category' => $categoryUpdate, 'subCategory' => $subCategoryUpdate], 200);
+
+        // return response()->json(['user' => $user], 200);
+
     }
 
     /**

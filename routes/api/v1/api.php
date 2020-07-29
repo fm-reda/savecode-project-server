@@ -41,6 +41,16 @@ Route::get('default-categories', 'DefaultCategoryController@index');
 
 
 Route::group(['middleware' => 'auth:api'], function () {
+    //user 
+
+    Route::post('userAvatar', 'api\v1\UserController@uploadAvatar');
+    Route::post('updateUser', 'api\v1\UserController@updateUser');
+    Route::post('updatecategories', 'CategoryController@updateCategories');
+    Route::post('singleCategories', 'CategoryController@singleCategories');
+
+
+
+
     Route::get('category', 'CategoryController@all');
     //custom
     Route::post('custom-category', 'CustomController@showByCategory');
@@ -64,6 +74,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         'elements' => 'ElementController',
 
     ]);
+    Route::post('elements/search', 'ElementController@showByTitle');
+
+
+
 
     // Route::resources([
     //     'customs' => 'ElementController',

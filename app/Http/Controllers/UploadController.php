@@ -19,7 +19,7 @@ class UploadController extends Controller
         // dd($file);
         $ext = $file->extension();
 
-        $name = $request->file('file');
+        // $name = $request->file('file');
         // $mytime = Carbon::now()->format('d-m-Y');
         // $random = Str::random(10);
         

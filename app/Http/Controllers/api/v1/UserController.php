@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 use App\User;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -67,6 +69,8 @@ class UserController extends Controller
         // dd($input);
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
+        $user->avatar = "default.png";
+        $user->save();
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         // dd($success['token']);
         $success['name'] =  $user->name;
@@ -93,6 +97,72 @@ class UserController extends Controller
         $users = Auth::user();
         return response()->json(['success' => $users], $this->successStatus);
     }
+    public function uploadAvatar(Request $request)
+
+    {
+        // $user = Auth::User();
+        // dd(User::All());
+
+
+        $user = Auth::user();
+        $file = $request->file('file');
+        // dd($file);
+        if (!$file) {
+
+            return response()->json(['warning' => 'file empty'], 200);
+        } else {
+            $ext = $file->extension();
+            $name = Carbon::now()->format('d-m-Y') . '-' . Str::random(10) . '.' . $ext;
+            $path = Storage::disk('public')->putFileAs('users', $file, $name);
+            $user->avatar = $name;
+            $user->save();
+
+
+
+
+
+            return response()->json(['user' => $user], 200);
+        }
+    }
+    public function updateUser(Request $request)
+
+    {
+        // $user = Auth::User();
+        // dd(User::All());
+
+
+        $user = Auth::user();
+        // return response()->json(['user' => $user], 200);
+
+        $checkEmail = User::where('email', $request->get('email'))->first();
+        // return response()->json(['user' => $checkEmail], 200);
+
+
+        if ($checkEmail && $checkEmail->id != $user->id) {
+            return response()->json(['Email already exist' => $checkEmail], 208);
+        }
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+
+        // dd($file);
+
+        // $user->avatar = $name;
+        $user->save();
+
+
+
+
+
+        return response()->json(['user' => $user], 200);
+    }
+}
+
+
+
+
+
+
+
     // public function searchByName($name)
     // {
     //     // dd($id);
@@ -110,4 +180,3 @@ class UserController extends Controller
     //     $user = Auth::logout();
     //     return response()->json(['success' => $user, 'message' => "user successefully logout"], $this->successStatus);
     // }
-}

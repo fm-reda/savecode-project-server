@@ -79,7 +79,7 @@ class CustomController extends Controller
         $custom = Custom::create([
             'title' => $element->title,
             'slug' => Str::slug($element->title, '-'),
-            'user_id' => $element->user->id,
+            'user_id' => Auth::User()->id,
             'element_id' => $request->get('element_id'),
             'category_id' => $category->id,
             'sub_category_id' => $subCategory->id,
@@ -113,7 +113,7 @@ class CustomController extends Controller
      */
     public function show($id)
     {
-        
+
         $custom = Custom::find($id);
 
 
@@ -121,7 +121,7 @@ class CustomController extends Controller
         if (!$custom) {
             return response()->json(['warning' => 'custom data not found'], 205);
         } else {
-            $element = $custom->element->first();
+            $custom->element->first();
             $category = $custom->category->first();
             $subCategory = $custom->subCategory->first();
             $user = $custom->user->first();
@@ -211,6 +211,14 @@ class CustomController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $custom = Custom::find($id);
+        if ($custom) {
+            $custom->delete();
+
+            return response()->json(['custom' => $custom], 200);
+        }
+
+
+        return response()->json(['custom' => "notFound"], 203);
     }
 }

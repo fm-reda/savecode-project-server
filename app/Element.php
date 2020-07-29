@@ -16,12 +16,13 @@ class Element extends Model
     {
         return $this->hasMany('App\Coment');
     }
-    public function custom()
+    public function customs()
     {
-        return $this->hasOne('App\Custom');
+        return $this->hasMany('App\Custom');
     }
     public function defaultCategory()
     {
         return $this->belongsTo('App\DefaultCategory');
     }
+  
 }
